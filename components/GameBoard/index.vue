@@ -2,7 +2,7 @@
     <div class="h-full relative overflow-hidden" style="background: #0a0603">
         <DealingAnimation />
 
-        <div v-if="_room.id" class="absolute" style="left: 16px; bottom: 16px; z-index: 20">
+        <div v-if="_room.id" class="absolute" style="right: 24px; bottom: 16px; z-index: 20">
             <RoomChat :roomId="_room.id" :mainPlayerId="_room.mainPlayer.id" />
         </div>
 
@@ -167,104 +167,32 @@
         </div>
 
         <div v-if="_game.hands.length" class="flex flex-col items-center justify-center h-full">
-            <div class="absolute" style="left: 16px; top: 16px; z-index: 10; width: 220px">
-                <GameLog />
+            <div class="absolute" style="left: 16px; top: 16px; z-index: 10">
+                <button
+                    @click="showGameLog = !showGameLog"
+                    class="font-pub text-[9px] tracking-[0.25em] uppercase px-2.5 py-1 rounded-lg transition-all duration-150 hover:opacity-80"
+                    style="
+                        background: rgba(8, 5, 3, 0.75);
+                        border: 1px solid rgba(255, 255, 255, 0.1);
+                        color: rgba(255, 248, 238, 0.3);
+                        backdrop-filter: blur(6px);
+                    "
+                >
+                    logs
+                </button>
+                <div v-if="showGameLog" class="mt-1">
+                    <GameLog @close="showGameLog = false" />
+                </div>
             </div>
 
             <div
                 v-if="_room.leaderboard.length"
                 class="absolute"
-                style="left: 16px; top: 50%; transform: translateY(-50%); z-index: 10"
+                style="left: 16px; bottom: 16px; z-index: 10"
             >
                 <RoomLeaderboard :entries="_room.leaderboard" />
             </div>
 
-            <div
-                v-if="_game.cardType && !champion()"
-                class="absolute pointer-events-none"
-                style="right: 24px; top: 24px; z-index: 10"
-            >
-                <div
-                    class="flex flex-col gap-5 p-5 rounded-2xl"
-                    style="
-                        background: rgba(8, 5, 3, 0.85);
-                        border: 1px solid rgba(255, 255, 255, 0.08);
-                        width: 270px;
-                        backdrop-filter: blur(10px);
-                    "
-                >
-                    <div class="flex flex-col gap-2">
-                        <span
-                            class="font-pub text-[11px] tracking-[0.4em] uppercase"
-                            style="color: rgba(255, 248, 238, 0.35)"
-                            >Round Card</span
-                        >
-                        <div class="flex items-center gap-4">
-                            <img
-                                :src="CARD_IMAGES[_game.cardType.toLowerCase() as keyof typeof CARD_IMAGES]"
-                                class="rounded-lg shadow-lg flex-shrink-0"
-                                style="width: 78px; height: 110px; object-fit: cover"
-                            />
-                            <div class="flex flex-col gap-1.5">
-                                <span
-                                    class="font-pub font-black tracking-[0.2em] uppercase leading-tight"
-                                    style="color: #fff8ee; font-size: 1.3rem"
-                                >
-                                    {{ _game.cardType }}
-                                </span>
-                                <span
-                                    class="font-body text-[13px] leading-snug"
-                                    style="color: rgba(255, 248, 238, 0.4)"
-                                >
-                                    Play only {{ _game.cardType }}s this round
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="flex flex-col gap-2">
-                        <div
-                            class="rounded-full overflow-hidden"
-                            style="height: 14px; background: rgba(255, 255, 255, 0.07)"
-                        >
-                            <div
-                                class="h-full rounded-full"
-                                :style="{
-                                    width:
-                                        gamePhase === 'playing' ? `${(turnTimeLeft / turnDurationS) * 100}%` : '100%',
-                                    transition:
-                                        gamePhase === 'playing' ? 'width 950ms linear, background 0.5s ease' : 'none',
-                                    background:
-                                        gamePhase !== 'playing'
-                                            ? 'rgba(255,248,238,0.12)'
-                                            : turnTimeLeft <= 5
-                                              ? '#ef4444'
-                                              : turnTimeLeft <= 10
-                                                ? '#f59e0b'
-                                                : 'rgba(255,248,238,0.5)',
-                                }"
-                            />
-                        </div>
-                        <span
-                            class="font-pub text-[11px] tracking-[0.3em] uppercase text-center transition-colors duration-300"
-                            :style="{
-                                color:
-                                    gamePhase === 'playing' && turnTimeLeft <= 5 ? '#f87171' : 'rgba(255,248,238,0.35)',
-                            }"
-                        >
-                            {{
-                                gamePhase === "playing"
-                                    ? `${turnTimeLeft} second${turnTimeLeft !== 1 ? "s" : ""} left`
-                                    : gamePhase === "dealing"
-                                      ? "Dealing cards..."
-                                      : gamePhase === "revealing"
-                                        ? "Revealing..."
-                                        : "Next turn..."
-                            }}
-                        </span>
-                    </div>
-                </div>
-            </div>
 
             <div class="relative" style="width: min(96vw, 1300px); height: min(72vh, 680px)">
                 <GameToast />
@@ -301,9 +229,51 @@
                         :key="card.id"
                         :src="_game.revealing ? card.img : CARD_IMAGES.no_card"
                         :id="'table-card-' + card.id"
-                        class="w-14 h-20 rounded-md shadow-2xl ring-1 ring-pub-gold/30 animate-card-land"
+                        class="rounded-md shadow-2xl ring-1 ring-pub-gold/30 animate-card-land"
+                        style="width: 56px; height: 80px"
                         :style="`--rot: ${(i - (_game.table.cards.length - 1) / 2) * 6}deg; animation-delay: ${i * 80}ms`"
                     />
+                </div>
+
+                <div
+                    v-if="_game.cardType && !champion()"
+                    class="absolute inset-x-0 flex justify-center"
+                    style="top: calc(46% - 12px); transform: translateY(-100%); z-index: 10; pointer-events: none"
+                >
+                    <div
+                        class="flex items-center gap-2 px-3 py-1.5 rounded-full font-pub"
+                        style="
+                            background: rgba(8, 5, 3, 0.82);
+                            border: 1px solid rgba(255, 255, 255, 0.1);
+                            backdrop-filter: blur(8px);
+                            width: clamp(180px, 18vw, 250px);
+                        "
+                    >
+                        <span class="font-black tracking-[0.2em] uppercase shrink-0" style="font-size: 9px; color: #f0c040">{{ _game.cardType }}'s Table</span>
+                        <div v-if="gamePhase === 'playing'" class="flex-1 rounded-full overflow-hidden" style="height: 6px; background: rgba(255,255,255,0.08)">
+                            <div
+                                class="h-full rounded-full"
+                                :style="{
+                                    width: `${(turnTimeLeft / turnDurationS) * 100}%`,
+                                    transition: 'width 950ms linear, background 0.5s ease',
+                                    background: turnTimeLeft <= 5 ? '#ef4444' : turnTimeLeft <= 10 ? '#f59e0b' : 'rgba(255,248,238,0.45)',
+                                }"
+                            />
+                        </div>
+                        <span
+                            v-else
+                            class="flex-1 tracking-wider transition-colors duration-300"
+                            style="font-size: 9px; color: rgba(255,248,238,0.3)"
+                        >
+                            {{
+                                gamePhase === "dealing"
+                                    ? "dealing..."
+                                    : gamePhase === "revealing"
+                                      ? "revealing..."
+                                      : "next..."
+                            }}
+                        </span>
+                    </div>
                 </div>
 
                 <Transition name="hands-reveal">
@@ -356,48 +326,14 @@
                     </div>
                 </Transition>
 
-                <Transition name="liar">
-                    <div
-                        v-if="giveUpCallerPos"
-                        class="absolute pointer-events-none flex flex-col items-center"
-                        style="z-index: 30"
-                        :style="`left: ${giveUpCallerPos.left}; top: calc(${giveUpCallerPos.top} - ${giveUpCallerPos.isMain ? '118px' : '56px'}); transform: translate(-50%, -100%);`"
-                    >
-                        <div
-                            class="liar-bubble font-pub font-black tracking-widest px-5 py-2.5 rounded-xl"
-                            style="
-                                font-size: 1.25rem;
-                                background: rgba(30, 40, 80, 0.97);
-                                color: #c7d2fe;
-                                border: 2px solid rgba(130, 140, 220, 0.6);
-                                box-shadow:
-                                    0 0 32px rgba(99, 102, 241, 0.7),
-                                    0 0 64px rgba(99, 102, 241, 0.3),
-                                    inset 0 1px 0 rgba(255, 255, 255, 0.1);
-                                text-shadow: 0 0 12px rgba(165, 180, 252, 0.8);
-                            "
-                        >
-                            I'm out!
-                        </div>
-                        <div
-                            style="
-                                width: 0;
-                                height: 0;
-                                border-left: 10px solid transparent;
-                                border-right: 10px solid transparent;
-                                border-top: 12px solid rgba(30, 40, 80, 0.97);
-                                filter: drop-shadow(0 4px 6px rgba(99, 102, 241, 0.5));
-                            "
-                        ></div>
-                    </div>
-                </Transition>
+
             </div>
         </div>
 
         <div
             v-if="_game.hands.length && !champion()"
             class="absolute"
-            style="bottom: 24px; right: 24px; z-index: 20; display: flex; gap: 8px; align-items: center"
+            style="bottom: 24px; left: 50%; transform: translateX(-50%); z-index: 20; display: flex; gap: 8px; align-items: center"
         >
             <button
                 @click="leaveRoom"
@@ -456,7 +392,7 @@
                         background: rgba(10, 7, 4, 0.97);
                         border: 1px solid rgba(184, 134, 11, 0.4);
                         box-shadow: 0 0 60px rgba(0, 0, 0, 0.9);
-                        width: 400px;
+                        width: min(400px, 90vw);
                         height: 260px;
                         text-align: center;
                     "
@@ -518,7 +454,6 @@ import {
     dealingActive,
     gamePhase,
     bluffCallerId,
-    giveUpPlayerId,
     handPosition,
     leftGame,
 } from "~/composables/useGame";
@@ -533,6 +468,7 @@ const _room = useRoom();
 const router = useRouter();
 
 const showEditModal = ref(false);
+const showGameLog = ref(false);
 const sandboxCount = ref(4);
 const isDev = import.meta.dev;
 
@@ -540,14 +476,6 @@ const startSandbox = () => {
     socket.emit("dev-sandbox", { mainPlayer: _room.mainPlayer, playerCount: sandboxCount.value });
 };
 
-const giveUpCallerPos = computed(() => {
-    if (!giveUpPlayerId.value) return null;
-    const hand = _game.hands.find((h) => h.player.id === giveUpPlayerId.value);
-    if (!hand) return null;
-    const { left, top, transform } = handPosition(hand);
-    const isMain = hand.player.id === _room.mainPlayer.id;
-    return { left, top, transform, isMain };
-});
 
 const bluffCallerPos = computed(() => {
     if (!bluffCallerId.value) return null;
@@ -575,9 +503,6 @@ const onEditConfirm = (username: string, avatar: number) => {
 
 const leaveRoom = () => {
     leftGame.value = true;
-    if (_game.hands.length) {
-        socket.emit("give-up", { room: { id: _room.id }, playerId: _room.mainPlayer.id });
-    }
     socket.emit("left-room", _room);
     _room.id = undefined;
     _room.enterRoomId = undefined;

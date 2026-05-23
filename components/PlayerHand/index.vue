@@ -19,8 +19,8 @@
                     @click="() => selectCard(card)"
                     class="card-item rounded-md shadow-xl cursor-pointer ring-1 ring-black/40"
                     :class="card.selected ? 'card-selected ring-2 ring-pub-gold shadow-xl' : ''"
-                    style="width: 68px; height: 97px; transform-origin: bottom center"
-                    :style="`transform: translateY(${card.selected ? '-16px' : '0px'}); z-index: ${card.selected ? 10 : i};`"
+                    style="width: clamp(52px, 5.3vw, 68px); height: clamp(74px, 7.6vw, 97px); transform-origin: bottom center"
+                    :style="`transform: translateY(${card.selected ? '-28px' : '0px'}) scale(${card.selected ? '1.1' : '1'}); z-index: ${card.selected ? 10 : i};`"
                 />
             </div>
 
@@ -107,18 +107,6 @@
                                 >LIAR!</span
                             >
                         </button>
-                        <button
-                            class="action-btn flex items-center gap-2 px-3.5 rounded-lg font-pub"
-                            style="background: rgba(160, 10, 10, 0.7); border: 1px solid rgba(220, 50, 50, 0.35)"
-                            @click="confirmGiveUp = true"
-                        >
-                            <span style="font-size: 1.1rem">🏳️</span>
-                            <span
-                                class="tracking-wider"
-                                style="font-size: 9px; color: rgba(255, 160, 160, 0.85); font-weight: 700"
-                                >GIVE UP</span
-                            >
-                        </button>
                     </div>
                 </div>
 
@@ -164,51 +152,6 @@
                 </span>
             </div>
 
-            <Teleport to="body">
-                <div
-                    v-if="confirmGiveUp && isMainPlayer"
-                    class="fixed inset-0 flex items-center justify-center"
-                    style="z-index: 200; background: rgba(0, 0, 0, 0.6)"
-                >
-                    <div
-                        class="flex flex-col items-center gap-4 px-8 py-6 rounded-2xl font-pub"
-                        style="
-                            background: rgba(120, 10, 10, 0.97);
-                            border: 1px solid rgba(220, 50, 50, 0.4);
-                            box-shadow: 0 0 60px rgba(180, 0, 0, 0.5);
-                        "
-                    >
-                        <span class="text-base tracking-widest" style="color: #f0c040">Give up?</span>
-                        <span class="text-xs text-center" style="color: rgba(196, 168, 130, 0.6); max-width: 180px"
-                            >You'll be eliminated from this match but stay in the room.</span
-                        >
-                        <div class="flex gap-3">
-                            <button
-                                class="action-btn px-4 py-1.5 rounded-xl text-xs tracking-wider"
-                                style="
-                                    background: rgba(180, 20, 20, 0.85);
-                                    border: 1px solid rgba(255, 100, 100, 0.35);
-                                    color: #fca5a5;
-                                "
-                                @click="[giveUp(), (confirmGiveUp = false)]"
-                            >
-                                🏳️ Yes, give up
-                            </button>
-                            <button
-                                class="action-btn px-4 py-1.5 rounded-xl text-xs tracking-wider"
-                                style="
-                                    background: rgba(0, 0, 0, 0.6);
-                                    border: 1px solid rgba(184, 134, 11, 0.3);
-                                    color: rgba(196, 168, 130, 0.8);
-                                "
-                                @click="confirmGiveUp = false"
-                            >
-                                Keep playing
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </Teleport>
         </div>
 
         <div
@@ -243,7 +186,6 @@ import {
     lifeEvents,
     gamePhase,
     dropCards,
-    giveUp,
     _game,
 } from "~/composables/useGame";
 import { localStream, peers, enabledPeers, isCamEnabled } from "~/composables/useWebRTC";
@@ -258,11 +200,10 @@ const props = defineProps<{
 }>();
 
 const avatarPx = computed(() => {
+    const scale = Math.min(1, window.innerWidth / 1440);
     const n = _game.hands.length;
-    if (n <= 2) return 120;
-    if (n <= 4) return 100;
-    if (n <= 6) return 86;
-    return 72;
+    const base = n <= 2 ? 120 : n <= 4 ? 100 : n <= 6 ? 86 : 72;
+    return Math.round(base * scale);
 });
 
 const flip = computed(() => handFlip(props.playerCards));
@@ -283,7 +224,6 @@ const activeStream = computed<MediaStream | null>(() => {
 
 const activeLifeEvent = computed(() => lifeEvents.find((e) => e.playerId === props.playerCards.player.id));
 
-const confirmGiveUp = ref(false);
 
 const _room = useRoom();
 
@@ -361,8 +301,9 @@ const mainPlayerSelectedCards = computed(
 
 .card-selected {
     box-shadow:
-        0 0 24px rgba(184, 134, 11, 0.5),
-        0 0 0 2px rgba(184, 134, 11, 0.8);
+        0 0 40px rgba(184, 134, 11, 0.75),
+        0 0 16px rgba(184, 134, 11, 0.5),
+        0 0 0 2px rgba(184, 134, 11, 0.9);
 }
 
 .life-float-text {

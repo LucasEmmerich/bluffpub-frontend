@@ -3,7 +3,7 @@
         class="shrink-0 flex items-stretch h-12 relative"
         style="background: #0a0603; border-bottom: 1px solid rgba(184, 134, 11, 0.12)"
     >
-        <div class="flex items-center gap-2.5 px-8">
+        <div class="flex items-center gap-2.5 px-4 xl:px-8">
             <NuxtLink
                 to="/"
                 class="font-pub font-black tracking-[0.25em] text-xs"
@@ -20,14 +20,14 @@
                         : 'background: rgba(184,134,11,0.06); border: 1px solid rgba(184,134,11,0.2); color: rgba(184,134,11,0.45);'
                 "
             >
-                v2.0.1
+                v2.1.0
             </NuxtLink>
         </div>
 
         <div class="absolute inset-y-0 left-1/2 -translate-x-1/2 flex items-stretch">
             <NuxtLink
                 to="/rules"
-                class="font-pub text-[10px] tracking-[0.25em] uppercase flex items-center px-6 transition-all duration-200"
+                class="font-pub text-[10px] tracking-[0.25em] uppercase flex items-center px-3 xl:px-6 transition-all duration-200"
                 :class="route.path === '/rules' ? 'link-active' : 'link-inactive'"
             >
                 Rules
@@ -37,7 +37,7 @@
 
             <NuxtLink
                 to="/"
-                class="font-pub text-sm font-black tracking-[0.25em] uppercase flex items-center px-8 transition-all duration-200"
+                class="font-pub text-sm font-black tracking-[0.25em] uppercase flex items-center px-5 xl:px-8 transition-all duration-200"
                 :class="route.path === '/' ? 'link-active' : 'link-inactive'"
             >
                 Play
@@ -47,14 +47,14 @@
 
             <NuxtLink
                 to="/about"
-                class="font-pub text-[10px] tracking-[0.25em] uppercase flex items-center px-6 transition-all duration-200"
+                class="font-pub text-[10px] tracking-[0.25em] uppercase flex items-center px-3 xl:px-6 transition-all duration-200"
                 :class="route.path === '/about' ? 'link-active' : 'link-inactive'"
             >
                 About
             </NuxtLink>
         </div>
 
-        <div class="ml-auto flex items-center gap-4 px-8">
+        <div class="ml-auto flex items-center gap-2 xl:gap-4 px-4 xl:px-8">
             <div class="flex items-center gap-1.5">
                 <div class="relative flex items-center justify-center w-1.5 h-1.5 shrink-0">
                     <span
@@ -73,8 +73,14 @@
 
             <div class="h-3 w-px" style="background: rgba(184, 134, 11, 0.15)"></div>
 
-            <div class="flex items-center gap-4">
-                <div v-for="stat in stats" :key="stat.label" class="flex flex-col items-center" style="width: 36px">
+            <div class="flex items-center gap-2 xl:gap-4">
+                <div
+                    v-for="stat in stats"
+                    :key="stat.label"
+                    class="flex flex-col items-center"
+                    :class="stat.label === 'rooms' ? 'hidden xl:flex' : ''"
+                    style="width: 36px"
+                >
                     <span
                         class="font-pub text-[11px] tabular-nums leading-tight"
                         style="color: rgba(240, 192, 64, 0.7)"

@@ -61,11 +61,12 @@ export const selectCard = (card: Card) => {
 };
 
 export const dropCards = (callLiar: boolean) => {
-    const move = {
-        player: _room.mainPlayer,
-        cardsDropped: _game.hands.find((x) => x.player.id === _room.mainPlayer.id)?.cards?.filter((x) => x.selected),
-        liarCall: callLiar,
-    };
+    const cardIds =
+        _game.hands
+            .find((x) => x.player.id === _room.mainPlayer.id)
+            ?.cards?.filter((x) => x.selected)
+            .map((x) => x.id) ?? [];
+    const move = { player: _room.mainPlayer, cardIds, liarCall: callLiar };
     if (callLiar) {
         bluffCallerId.value = _room.mainPlayer.id ?? null;
         callBluffAnimation(() => socket.emit("drop-cards", { room: _room, move }));
@@ -74,13 +75,7 @@ export const dropCards = (callLiar: boolean) => {
     }
 };
 
-export const giveUpPlayerId = ref<string | null>(null);
 export const leftGame = ref(false);
-
-export const giveUp = () => {
-    giveUpPlayerId.value = _room.mainPlayer.id ?? null;
-    socket.emit("give-up", { room: { id: _room.id }, playerId: _room.mainPlayer.id });
-};
 
 export const TABLE_RX = 46;
 export const TABLE_RY = 46;
@@ -482,21 +477,21 @@ if (import.meta.client) {
         }, _lifeLossRevealMs);
     });
 
-    socket.on("player-gave-up", ({ game, result }: { game: any; result: BluffResult }) => {
+
+    socket.on("player-left-game", ({ game, result }: { game: any; result: BluffResult }) => {
         if (leftGame.value) return;
-        giveUpPlayerId.value = result.loser.id;
-        const e = { type: "eliminated" as GameLogEntry["type"], text: `${result.loser.username} gave up` };
+        const e = { type: "eliminated" as GameLogEntry["type"], text: `${result.loser.username} left the game` };
         addLog(e);
-        addToast(e, 1800);
+        addToast(e);
         setTimeout(() => {
-            giveUpPlayerId.value = null;
             _game.turn = game.turn?.username ?? game.turn;
             _game.hands = remapHandImages(orderPlayerTablePosition(game.hands));
             _game.cardType = game.cardType;
             _game.table = game.table;
             _game.matchStarted = !result.gameOver;
             if (result.gameOver) gamePhase.value = "idle";
-        }, _lifeLossRevealMs);
+            else startCountdown(_interTurnDelayMs);
+        }, _interTurnDelayMs);
     });
 
     socket.on("turn-skipped", (game: any) => {

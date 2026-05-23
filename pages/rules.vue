@@ -135,17 +135,6 @@
                     After the reveal, a new round begins with cards redistributed to all players.
                 </p>
 
-                <div
-                    class="mt-10 p-6 rounded-xl flex flex-col items-center gap-3"
-                    style="background: rgba(160, 10, 10, 0.08); border: 1px solid rgba(220, 50, 50, 0.25)"
-                >
-                    <div class="text-4xl">🏳️</div>
-                    <h3 class="font-pub text-red-400 text-center text-lg tracking-wide">Give Up</h3>
-                    <p class="font-body text-pub-cream/60 text-sm text-center leading-relaxed max-w-sm">
-                        Can't go on? Hit <strong class="text-pub-cream">Give Up</strong> to bow out of the match. You
-                        stay in the room — but you're eliminated. The game carries on without you.
-                    </p>
-                </div>
             </div>
         </section>
 

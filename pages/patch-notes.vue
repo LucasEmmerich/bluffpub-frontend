@@ -93,6 +93,42 @@ const releases: Array<{
     groups: Array<{ icon: string; title: string; items: Array<{ tag: Tag; text: string }> }>;
 }> = [
     {
+        version: "2.1.0",
+        date: "May 23, 2025",
+        label: "Stability & Polish",
+        groups: [
+            {
+                icon: "🎮",
+                title: "Play",
+                items: [
+                    { tag: "NEW", text: "Players who leave mid-game are now immediately eliminated — a new round starts for everyone still at the table" },
+                    { tag: "FIX", text: "Room owner can no longer restart a match that is already in progress" },
+                    { tag: "FIX", text: "Leaving during another player's turn no longer causes the wrong player to lose a life" },
+                    { tag: "FIX", text: "Bluff intent can no longer be signalled outside of your own turn" },
+                ],
+            },
+            {
+                icon: "🔒",
+                title: "Server",
+                items: [
+                    { tag: "IMPROVED", text: "Card moves are now fully validated server-side — card data can no longer be tampered with by the client" },
+                    { tag: "FIX", text: "Turn timer now resets correctly between rounds, preventing stale timers from carrying over" },
+                    { tag: "FIX", text: "Match state is now accurately tracked after game over, preventing unintended events from firing in finished games" },
+                ],
+            },
+            {
+                icon: "🖥️",
+                title: "Table UI",
+                items: [
+                    { tag: "IMPROVED", text: "Round info panel relocated from the top-right corner to a compact strip above the table cards" },
+                    { tag: "IMPROVED", text: "Card type label and turn timer bar now share a single horizontal line" },
+                    { tag: "IMPROVED", text: "Timer displays the current phase (dealing / revealing / next...) when not actively counting down" },
+                    { tag: "IMPROVED", text: "Selected cards now shift up further, scale up, and emit a stronger gold glow" },
+                ],
+            },
+        ],
+    },
+    {
         version: "2.0.1",
         date: "April 24, 2025",
         label: "Leave Room Fix",
@@ -117,11 +153,6 @@ const releases: Array<{
                 icon: "🎮",
                 title: "Play",
                 items: [
-                    { tag: "NEW", text: "Give Up — players can bow out of a match mid-game without leaving the room" },
-                    {
-                        tag: "IMPROVED",
-                        text: "Give up preserves the current round for remaining players unless it was the quitter's turn",
-                    },
                     { tag: "IMPROVED", text: "Revealing phase extended to 5 seconds for better readability" },
                 ],
             },
@@ -131,7 +162,7 @@ const releases: Array<{
                 items: [
                     {
                         tag: "IMPROVED",
-                        text: "Full table layout redesign — Play, LIAR! and Give Up buttons now sit alongside the main player's avatar",
+                        text: "Full table layout redesign — Play and LIAR! buttons now sit alongside the main player's avatar",
                     },
                     { tag: "IMPROVED", text: "Main player cards displayed flat side-by-side instead of fanned" },
                     {
@@ -157,7 +188,7 @@ const releases: Array<{
                 items: [
                     {
                         tag: "IMPROVED",
-                        text: 'Rules page updated — Give Up mechanic documented, "Bluff!" renamed to "LIAR!" throughout, camera/mic tip added',
+                        text: 'Rules page updated — "Bluff!" renamed to "LIAR!" throughout, camera/mic tip added',
                     },
                 ],
             },

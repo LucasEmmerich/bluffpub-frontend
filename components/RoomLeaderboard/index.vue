@@ -6,7 +6,7 @@
             border: 1px solid rgba(255, 255, 255, 0.18);
             backdrop-filter: blur(10px);
             box-shadow: 0 4px 32px rgba(0, 0, 0, 0.7);
-            width: 220px;
+            width: clamp(160px, 17vw, 220px);
             height: 158px;
         "
     >

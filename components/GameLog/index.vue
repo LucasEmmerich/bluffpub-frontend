@@ -2,24 +2,36 @@
     <div
         class="flex flex-col rounded-xl overflow-hidden"
         style="
-            background: rgba(8, 5, 3, 0.92);
+            background: rgba(8, 5, 3, 0.95);
             border: 1px solid rgba(255, 255, 255, 0.18);
             backdrop-filter: blur(10px);
-            box-shadow:
-                0 4px 32px rgba(0, 0, 0, 0.7),
-                0 0 0 1px rgba(255, 255, 255, 0.04);
-            height: 152px;
+            box-shadow: 0 4px 32px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255, 255, 255, 0.04);
+            width: clamp(200px, 18vw, 260px);
         "
     >
-        <div class="shrink-0 px-3 py-1.5" style="border-bottom: 1px solid rgba(255, 255, 255, 0.08)">
-            <span class="font-pub text-[9px] tracking-[0.35em] uppercase" style="color: rgba(255, 248, 238, 0.45)"
-                >Game Logs (last 5)</span
+        <div class="shrink-0 flex items-center px-3 py-1.5" style="border-bottom: 1px solid rgba(255, 255, 255, 0.08)">
+            <span class="font-pub text-[9px] tracking-[0.35em] uppercase flex-1" style="color: rgba(255, 248, 238, 0.45)"
+                >Game Log</span
             >
+            <button
+                @click="emit('close')"
+                class="font-pub text-[10px] transition-opacity hover:opacity-70 leading-none"
+                style="color: rgba(255, 248, 238, 0.3)"
+            >
+                ✕
+            </button>
         </div>
-        <div class="flex flex-col px-2 py-1.5 overflow-hidden">
+        <div class="flex flex-col px-2 py-1.5 overflow-y-auto chat-scroll" style="max-height: 220px">
+            <div
+                v-if="gameLogs.length === 0"
+                class="font-pub text-[9px] py-2 text-center"
+                style="color: rgba(255, 248, 238, 0.15)"
+            >
+                No events yet...
+            </div>
             <TransitionGroup name="log">
                 <div
-                    v-for="entry in gameLogs.slice(0, 5)"
+                    v-for="entry in gameLogs"
                     :key="entry.id"
                     class="font-pub text-[9px] leading-snug py-1 px-1"
                     :style="{ color: colors[entry.type], borderBottom: '1px solid rgba(255,255,255,0.05)' }"
@@ -34,6 +46,8 @@
 <script setup lang="ts">
 import { gameLogs } from "~/composables/useGame";
 import type { GameLogEntry } from "~/composables/useGame";
+
+const emit = defineEmits<{ close: [] }>();
 
 const displayText = (entry: GameLogEntry): string => {
     switch (entry.type) {
@@ -65,9 +79,7 @@ const colors: Record<string, string> = {
 
 <style scoped>
 .log-enter-active {
-    transition:
-        opacity 0.3s ease,
-        transform 0.3s ease;
+    transition: opacity 0.3s ease, transform 0.3s ease;
 }
 .log-enter-from {
     opacity: 0;
@@ -78,13 +90,13 @@ const colors: Record<string, string> = {
     transform: translateX(0);
 }
 
-.log-scroll::-webkit-scrollbar {
+.chat-scroll::-webkit-scrollbar {
     width: 3px;
 }
-.log-scroll::-webkit-scrollbar-track {
+.chat-scroll::-webkit-scrollbar-track {
     background: transparent;
 }
-.log-scroll::-webkit-scrollbar-thumb {
+.chat-scroll::-webkit-scrollbar-thumb {
     background: rgba(255, 255, 255, 0.08);
     border-radius: 2px;
 }
